@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase FCM Test</title>
+</head>
+<body>
+  <h1>Firebase FCM Test</h1>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-analytics-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-messaging-compat.js"></script>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQp8i-wb9PTnkIUmsCwn4xvcNiJCJmfS8",
+      authDomain: "prodt-d73a4.firebaseapp.com",
+      projectId: "prodt-d73a4",
+      storageBucket: "prodt-d73a4.firebasestorage.app",
+      messagingSenderId: "632677723940",
+      appId: "1:632677723940:web:a8beefb2e7d9dcff6a0db1",
+      measurementId: "G-YXP9GBC9G5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Get Firebase Messaging instance
+    const messaging = firebase.messaging();
+
+    // Request permission for notifications
+    messaging
+      .getToken({
+        vapidKey: "BMeeoaZLn3kdro5ba21vzTM6NnQ33JZG1jTjXRN8pUacDDsXT9U0qu5gxUcfW9Kf0oY5VmJsRJ6ZGNA5Xvq-e4Y",
+      })
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("FCM Token:", currentToken);
+          saveTokenToBackend(currentToken);
+        } else {
+          console.warn("No registration token available. Request permission to generate one.");
+        }
+      })
+      .catch((err) => {
+        console.error("An error occurred while retrieving the token.", err);
+      });
+
+    // Save token to your backend
+    function saveTokenToBackend(token) {
+      fetch("https://bumblebeex.prodt.co/api:Yf2mChG1:dev/fcm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log("Token saved successfully:", data))
+        .catch((error) => console.error("Error saving token:", error));
+    }
+  </script>
+</body>
+</html>
